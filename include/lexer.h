@@ -14,7 +14,11 @@ enum TokenType
     CloseParen,
     BinaryOperator,
     Myn,
+    LogicalOperator,
+    OpenBrace,
+    CloseBrace
 };
+
 
 struct Token
 {

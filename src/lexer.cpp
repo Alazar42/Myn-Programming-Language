@@ -79,6 +79,8 @@ std::vector<Token> tokenize(std::string &sourceCode)
     std::vector<Token> tokens;
     std::vector<std::string> src = splitString(sourceCode);
 
+    int currentPosition = 0;
+
     while (!src.empty())
     {
         if (src.front() == "(")
@@ -89,17 +91,56 @@ std::vector<Token> tokenize(std::string &sourceCode)
         {
             tokens.push_back(token(shift(src), TokenType::CloseParen));
         }
-        else if (src.front() == "+" || src.front() == "-" || src.front() == "*" || src.front() == "/")
+        else if (src.front() == "+"
+                 || src.front() == "-"
+                 || src.front() == "*"
+                 || src.front() == "/")
         {
             tokens.push_back(token(shift(src), TokenType::BinaryOperator));
         }
         else if (src.front() == "=")
         {
-            tokens.push_back(token(shift(src), TokenType::Equals));
+            if (currentPosition == 0)
+            {
+                std::cerr << "Error: '=' cannot appear at the beginning of the expression." << std::endl;
+                return tokens;
+            }
+
+            // Check if "=" is followed by a valid expression
+            if (src.size() > 1)
+            {
+                const std::string& nextToken = src[1];
+                if (isNumber(nextToken) || isAlpha(nextToken) || nextToken == "(")
+                {
+                    tokens.push_back(token(shift(src), TokenType::Equals));
+                }
+                else
+                {
+                    std::cerr << "Error: Invalid expression after '=' at position " << currentPosition << "." << std::endl;
+                    return tokens;
+                }
+            }
+            else
+            {
+                std::cerr << "Error: '=' must be followed by an expression at position " << currentPosition << "." << std::endl;
+                return tokens;
+            }
         }
         else if (src.front() == "myn")
         {
             tokens.push_back(token(shift(src), TokenType::Myn));
+        }
+        else if (src.front() == "{")
+        {
+            tokens.push_back(token(shift(src), TokenType::OpenBrace));
+        }
+        else if (src.front() == "}")
+        {
+            tokens.push_back(token(shift(src), TokenType::CloseBrace));
+        }
+        else if (src.front() == "and" || src.front() == "or")
+        {
+            tokens.push_back(token(shift(src), TokenType::LogicalOperator));
         }
         else
         {
@@ -132,13 +173,16 @@ std::vector<Token> tokenize(std::string &sourceCode)
             }
             else
             {
-                std::cout << "Unrecognized character found! " << std::endl;
-                exit(1);
+                std::cerr << "Error: Unrecognized character '" << src.front() << "' found at position " << currentPosition << "." << std::endl;
+                return tokens;
             }
         }
+
+        currentPosition++;
     }
 
     return tokens;
 }
+
 
 

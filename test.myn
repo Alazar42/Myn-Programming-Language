@@ -1,1 +1,1 @@
-let x = 45 + ( foo * bar )
+myn x = 45 + ( foo * bar ) or ( and )
