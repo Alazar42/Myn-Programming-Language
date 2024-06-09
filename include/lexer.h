@@ -16,8 +16,13 @@ enum TokenType
     Myn,
     LogicalOperator,
     OpenBrace,
-    CloseBrace
+    CloseBrace,
+    OpenBracket,
+    CloseBracket,
+    ClassKeyword,
+    FunctionKeyword
 };
+
 
 
 struct Token
