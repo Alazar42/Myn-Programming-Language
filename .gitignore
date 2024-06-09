@@ -1,0 +1,130 @@
+# Compiled object files
+*.o
+*.obj
+*.lo
+*.slo
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.a
+*.lib
+
+# Executable files
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+*.mod
+*.exp
+
+# Other intermediate files
+*.ilk
+*.sbr
+*.psess
+*.vsp
+*.vspx
+*.ncb
+*.opensdf
+*.sdf
+*.cache
+*.pch
+*.aux
+*.log
+*.toc
+*.idx
+*.ind
+*.lo
+*.la
+*.cma
+*.snm
+*.nav
+*.out
+*.brf
+
+# CMake generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+build/
+CTestTestfile.cmake
+cmake-build-*/
+
+# Qt-Generated files
+moc_*.cpp
+moc_*.h
+ui_*.h
+qrc_*.cpp
+
+# Code::Blocks generated files
+*.layout
+*.depend
+*.layout
+
+# CodeLite generated files
+*.tags
+.tags*
+
+# CLion generated files
+.idea/
+.clion/
+cmake-build-debug/
+cmake-build-release/
+cmake-build-relwithdebinfo/
+cmake-build-minsizerel/
+
+# Sublime generated files
+*.sublime-workspace
+
+# User-specific files
+*.user
+*.user.*
+*.swp
+*~.nib
+
+# MacOS files
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+# Windows files
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# VS Code files
+.vscode/
+.vscode-test/
+
+# JetBrains IDEs files
+.idea/
+
+# Static analysis tools
+compile_commands.json
+
+# Compiled resource files
+*.rc
+
+# Other miscellaneous
+*.bak
+*.orig
+*.rej
+*~

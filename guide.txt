@@ -1,0 +1,38 @@
+my_compiler/
+├── bin/                     # Compiled binaries
+├── build/                   # Build files
+├── docs/                    # Documentation
+├── include/                 # Header files
+│   ├── Lexer.h
+│   ├── parser/
+│   │   └── Parser.h
+│   ├── ast/
+│   │   └── ASTNode.h
+│   ├── tokens/
+│   │   └── Token.h
+│   └── compiler/
+│       └── Compiler.h
+├── src/                     # Source files
+│   ├── lexer/
+│   │   └── Lexer.cpp
+│   ├── parser/
+│   │   └── Parser.cpp
+│   ├── ast/
+│   │   └── ASTNode.cpp      # If needed
+│   ├── tokens/
+│   │   └── Token.cpp        # If needed
+│   └── compiler/
+│       └── Compiler.cpp
+├── tests/                   # Unit tests
+│   ├── lexer/
+│   │   └── LexerTests.cpp
+│   ├── parser/
+│   │   └── ParserTests.cpp
+│   ├── ast/
+│   │   └── ASTNodeTests.cpp
+│   ├── tokens/
+│   │   └── TokenTests.cpp
+│   └── compiler/
+│       └── CompilerTests.cpp
+├── CMakeLists.txt           # CMake build configuration
+└── README.md                # Project description and instructions
