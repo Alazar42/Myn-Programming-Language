@@ -1,1 +1,2 @@
-myn x = 45 + ( foo * bar ) or ( and )
+myn x = 45 + ( foo * bar ) or ( and ) 
+[ ]

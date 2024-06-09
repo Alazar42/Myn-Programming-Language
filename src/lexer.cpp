@@ -138,6 +138,14 @@ std::vector<Token> tokenize(std::string &sourceCode)
         {
             tokens.push_back(token(shift(src), TokenType::CloseBrace));
         }
+        else if (src.front() == "[")
+        {
+            tokens.push_back(token(shift(src), TokenType::OpenBrace));
+        }
+        else if (src.front() == "]")
+        {
+            tokens.push_back(token(shift(src), TokenType::OpenBrace));
+        }
         else if (src.front() == "and" || src.front() == "or")
         {
             tokens.push_back(token(shift(src), TokenType::LogicalOperator));
@@ -183,6 +191,7 @@ std::vector<Token> tokenize(std::string &sourceCode)
 
     return tokens;
 }
+
 
 
 
