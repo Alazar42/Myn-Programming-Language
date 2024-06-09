@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include "lexer.cpp"
+#include "../include/lexer.h"
 #include <filesystem>
 #include <fstream>
 
@@ -19,20 +20,27 @@ void handleFile(const std::string &filename) {
         return;
     }
 
-    std::cout << "Reading file: " << filename << std::endl;
+    // Read the contents of the file into a string
     std::stringstream buffer;
     buffer << file.rdbuf();
     std::string fileContent = buffer.str();
 
     if (file.bad()) {
         std::cerr << "Error: An I/O error occurred while reading the file " << filename << std::endl;
-    } else if (!file.eof()) {
-        std::cerr << "Error: An unexpected error occurred while reading the file " << filename << std::endl;
+        file.close();
+        return;
     }
 
     file.close();
 
-    lexer(fileContent);
+    // Tokenize the file content
+    std::vector<Token> tokens = tokenize(fileContent);
+
+    // Now you can do something with the tokens, like parsing or interpreting them
+    // For now, let's just print them
+    for (const Token& token : tokens) {
+        std::cout << "Token: " << token.value << ", Type: " << token.type << std::endl;
+    }
 }
 
 int main(int argc, char const *argv[]) {
