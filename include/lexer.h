@@ -20,7 +20,13 @@ enum TokenType
     OpenBracket,
     CloseBracket,
     ClassKeyword,
-    FunctionKeyword
+    FunctionKeyword, 
+    String, 
+    SwitchKeyword, 
+    ForKeyword, 
+    WhileKeyword, 
+    Out, 
+    In
 };
 
 

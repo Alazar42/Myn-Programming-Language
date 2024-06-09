@@ -18,22 +18,46 @@ std::vector<std::string> splitString(const std::string &sourceCode)
 {
     std::vector<std::string> words;
     std::string word;
+    bool inQuote = false; // Flag to track if we are inside a quoted string
+
     for (char ch : sourceCode)
     {
-        if (ch != ' ')
+        if (ch == '\'' || ch == '"')
         {
+            // Toggle the inQuote flag when encountering a quote
+            inQuote = !inQuote;
+
+            // If we're not inside a quoted string anymore, add the word to the vector
+            if (!inQuote && !word.empty())
+            {
+                words.push_back(word);
+                word.clear();
+            }
+        }
+        else if (!inQuote && ch == ' ')
+        {
+            // If we're not inside a quoted string and encounter a space,
+            // add the word to the vector
+            if (!word.empty())
+            {
+                words.push_back(word);
+                word.clear();
+            }
+        }
+        else
+        {
+            // If we're inside a quoted string or the character is not a space,
+            // add the character to the current word
             word += ch;
         }
-        else if (!word.empty())
-        {
-            words.push_back(word);
-            word.clear();
-        }
     }
+
+    // Add the last word if it's not empty
     if (!word.empty())
     {
         words.push_back(word);
     }
+
     return words;
 }
 
@@ -91,10 +115,23 @@ std::vector<Token> tokenize(std::string &sourceCode)
         {
             tokens.push_back(token(shift(src), TokenType::CloseParen));
         }
-        else if (src.front() == "+"
-                 || src.front() == "-"
-                 || src.front() == "*"
-                 || src.front() == "/")
+        else if (src.front() == "[")
+        {
+            tokens.push_back(token(shift(src), TokenType::OpenBracket));
+        }
+        else if (src.front() == "]")
+        {
+            tokens.push_back(token(shift(src), TokenType::CloseBracket));
+        }
+        else if (src.front() == "{")
+        {
+            tokens.push_back(token(shift(src), TokenType::OpenBrace));
+        }
+        else if (src.front() == "}")
+        {
+            tokens.push_back(token(shift(src), TokenType::CloseBrace));
+        }
+        else if (src.front() == "+" || src.front() == "-" || src.front() == "*" || src.front() == "/")
         {
             tokens.push_back(token(shift(src), TokenType::BinaryOperator));
         }
@@ -109,7 +146,7 @@ std::vector<Token> tokenize(std::string &sourceCode)
             // Check if "=" is followed by a valid expression
             if (src.size() > 1)
             {
-                const std::string& nextToken = src[1];
+                const std::string &nextToken = src[1];
                 if (isNumber(nextToken) || isAlpha(nextToken) || nextToken == "(")
                 {
                     tokens.push_back(token(shift(src), TokenType::Equals));
@@ -130,25 +167,53 @@ std::vector<Token> tokenize(std::string &sourceCode)
         {
             tokens.push_back(token(shift(src), TokenType::Myn));
         }
-        else if (src.front() == "{")
-        {
-            tokens.push_back(token(shift(src), TokenType::OpenBrace));
-        }
-        else if (src.front() == "}")
-        {
-            tokens.push_back(token(shift(src), TokenType::CloseBrace));
-        }
-        else if (src.front() == "[")
-        {
-            tokens.push_back(token(shift(src), TokenType::OpenBrace));
-        }
-        else if (src.front() == "]")
-        {
-            tokens.push_back(token(shift(src), TokenType::OpenBrace));
-        }
         else if (src.front() == "and" || src.front() == "or")
         {
             tokens.push_back(token(shift(src), TokenType::LogicalOperator));
+        }
+        else if (src.front() == "for")
+        {
+            tokens.push_back(token(shift(src), TokenType::ForKeyword));
+        }
+        else if (src.front() == "while")
+        {
+            tokens.push_back(token(shift(src), TokenType::WhileKeyword));
+        }
+        else if (src.front() == "switch")
+        {
+            tokens.push_back(token(shift(src), TokenType::SwitchKeyword));
+        }
+        else if (src.front() == "class")
+        {
+            tokens.push_back(token(shift(src), TokenType::ClassKeyword));
+        }
+        else if (src.front() == "function")
+        {
+            tokens.push_back(token(shift(src), TokenType::FunctionKeyword));
+        }
+        else if (src.front() == "in")
+        {
+            tokens.push_back(token(shift(src), TokenType::In));
+        }
+        else if (src.front() == "out")
+        {
+            tokens.push_back(token(shift(src), TokenType::Out));
+        }
+        else if (src.front() == "\"" || src.front() == "'")
+        {
+            // Handle strings enclosed in double or single quotes
+            std::string quote = shift(src);
+            std::string str;
+            str += quote; // Include the opening quote
+            while (!src.empty() && src.front() != quote)
+            {
+                str += shift(src);
+            }
+            if (!src.empty())
+            {
+                str += shift(src); // Add the closing quote
+            }
+            tokens.push_back(token(str, TokenType::String));
         }
         else
         {
@@ -191,7 +256,3 @@ std::vector<Token> tokenize(std::string &sourceCode)
 
     return tokens;
 }
-
-
-
-
