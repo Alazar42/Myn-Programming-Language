@@ -5,39 +5,36 @@
 #include <vector>
 #include <map>
 
-enum TokenType
-{
-    Number,
+enum class TokenType {
+    Unknown,
     Identifier,
-    Equals,
-    OpenParen,
-    CloseParen,
+    Number,
+    String,
     BinaryOperator,
+    Equals,
     Myn,
     LogicalOperator,
+    ForKeyword,
+    WhileKeyword,
+    SwitchKeyword,
+    ClassKeyword,
+    FunctionKeyword,
+    In,
+    Out,
+    OpenParen,
+    CloseParen,
+    OpenSBracket,
+    CloseSBracket,
     OpenBrace,
     CloseBrace,
-    OpenBracket,
-    CloseBracket,
-    ClassKeyword,
-    FunctionKeyword, 
-    String, 
-    SwitchKeyword, 
-    ForKeyword, 
-    WhileKeyword, 
-    Out, 
-    In
+    EndOfStream
 };
 
-
-
-struct Token
-{
+struct Token {
     std::string value;
     TokenType type;
 };
 
-void INIT_RESERVED_IDENTIFIER();
 std::vector<Token> tokenize(std::string &sourceCode);
 
-#endif // LEXER_H
+#endif // LEXER_Hz

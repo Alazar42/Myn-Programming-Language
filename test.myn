@@ -1,1 +1,3 @@
-myn x = 45 + ( foo * bar ) or ( and ) fun class for while "micky" in out
+fun test ( ) 
+   myn x = in ( 'Enter Your Name:' ) 
+   out ( x )

@@ -1,11 +1,9 @@
 #include <iostream>
 #include <string>
-#include "lexer.cpp"
 #include "../include/lexer.h"
 #include <filesystem>
 #include <fstream>
 
-// Function to check if a string ends with a given suffix (now using std::filesystem)
 bool hasValidExtension(const std::string &filename) {
     std::filesystem::path filePath(filename);
     std::string extension = filePath.extension().string();
@@ -20,7 +18,6 @@ void handleFile(const std::string &filename) {
         return;
     }
 
-    // Read the contents of the file into a string
     std::stringstream buffer;
     buffer << file.rdbuf();
     std::string fileContent = buffer.str();
@@ -33,18 +30,14 @@ void handleFile(const std::string &filename) {
 
     file.close();
 
-    // Tokenize the file content
     std::vector<Token> tokens = tokenize(fileContent);
 
-    // Now you can do something with the tokens, like parsing or interpreting them
-    // For now, let's just print them
     for (const Token& token : tokens) {
-        std::cout << "Token: " << token.value << ", Type: " << token.type << std::endl;
+        std::cout << "Token: " << token.value << ", Type: " << static_cast<int>(token.type) << std::endl;
     }
 }
 
 int main(int argc, char const *argv[]) {
-    // Check if there is at least one command-line argument
     if (argc < 2) {
         std::cerr << "No arguments provided." << std::endl;
         return 1;
@@ -52,7 +45,6 @@ int main(int argc, char const *argv[]) {
 
     int fileCount = 0;
 
-    // Using a for loop to iterate through command-line arguments
     for (int i = 1; i < argc; i++) {
         std::string filename = argv[i];
         
