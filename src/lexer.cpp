@@ -142,7 +142,7 @@ std::vector<Token> tokenize(std::string &sourceCode)
                 }
             }
             else if (ch == '(' || ch == ')' || ch == '[' || ch == ']' || ch == '{' || ch == '}' || 
-                     ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '=' || ch == ';')
+                     ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '=' || ch == ';' || ch == ',')
             {
                 if (!buffer.empty())
                 {
@@ -163,6 +163,7 @@ std::vector<Token> tokenize(std::string &sourceCode)
                     case '+': case '-': case '*': case '/': type = TokenType::ArithmeticOperator; break;
                     case '=': type = TokenType::AssignmentOperator; break;
                     case ';': type = TokenType::Semicolon; break;
+                    case ',': type = TokenType::Comma; break;
                 }
                 tokens.push_back(token(std::string(1, ch), type));
             }
