@@ -1,3 +1,5 @@
-fun test ( ) 
-   myn x = in ( 'Enter Your Name:' ) 
-   out ( x )
+fun start(args[]){
+    while(True){
+        pass;
+    }
+}

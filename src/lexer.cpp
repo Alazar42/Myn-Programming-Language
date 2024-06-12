@@ -3,6 +3,9 @@
 #include <sstream>
 #include <cstring>
 #include <cstdlib>
+#include <vector>
+#include <map>
+#include <cctype>
 
 typedef std::map<std::string, TokenType> ReservedIdentMap;
 
@@ -11,55 +14,50 @@ ReservedIdentMap reservedIdent;
 
 void INIT_RESERVED_IDENTIFIER()
 {
-    reservedIdent["myn"] = TokenType::Myn;
+    reservedIdent["myn"] = TokenType::ReservedKeyword;
+    reservedIdent["for"] = TokenType::ReservedKeyword;
+    reservedIdent["while"] = TokenType::ReservedKeyword;
+    reservedIdent["switch"] = TokenType::ReservedKeyword;
+    reservedIdent["fun"] = TokenType::ReservedKeyword;
+    reservedIdent["class"] = TokenType::ReservedKeyword;
+    reservedIdent["break"] = TokenType::ReservedKeyword;
+    reservedIdent["case"] = TokenType::ReservedKeyword;
+    reservedIdent["True"] = TokenType::ReservedKeyword;
+    reservedIdent["False"] = TokenType::ReservedKeyword;
+    reservedIdent["public"] = TokenType::ReservedKeyword;
+    reservedIdent["enum"] = TokenType::ReservedKeyword;
+    reservedIdent["private"] = TokenType::ReservedKeyword;
+    reservedIdent["protected"] = TokenType::ReservedKeyword;
+    reservedIdent["void"] = TokenType::ReservedKeyword;
+    reservedIdent["this"] = TokenType::ReservedKeyword;
+    reservedIdent["throw"] = TokenType::ReservedKeyword;
+    reservedIdent["try"] = TokenType::ReservedKeyword;
+    reservedIdent["catch"] = TokenType::ReservedKeyword;
+    reservedIdent["import"] = TokenType::ReservedKeyword;
+    reservedIdent["continue"] = TokenType::ReservedKeyword;
+    reservedIdent["pass"] = TokenType::ReservedKeyword;
+    reservedIdent["NULL"] = TokenType::ReservedKeyword;
+    reservedIdent["elif"] = TokenType::ReservedKeyword;
+    reservedIdent["else"] = TokenType::ReservedKeyword;
+    reservedIdent["if"] = TokenType::ReservedKeyword;
+    reservedIdent["static"] = TokenType::ReservedKeyword;
+    reservedIdent["return"] = TokenType::ReservedKeyword;
+    reservedIdent["input"] = TokenType::ReservedKeyword;
+    reservedIdent["output"] = TokenType::ReservedKeyword;
+
+    // Add data types
+    reservedIdent["int"] = TokenType::ReservedKeyword;
+    reservedIdent["float"] = TokenType::ReservedKeyword;
+    reservedIdent["string"] = TokenType::ReservedKeyword;
+    reservedIdent["bool"] = TokenType::ReservedKeyword;
 }
 
-std::vector<std::string> splitString(const std::string &sourceCode)
-{
-    std::vector<std::string> words;
-    std::string word;
-    bool inQuote = false; // Flag to track if we are inside a quoted string
-
-    for (char ch : sourceCode)
-    {
-        if (ch == '\'' || ch == '"')
-        {
-            // Toggle the inQuote flag when encountering a quote
-            inQuote = !inQuote;
-
-            // If we're not inside a quoted string anymore, add the word to the vector
-            if (!inQuote && !word.empty())
-            {
-                words.push_back(word);
-                word.clear();
-            }
-        }
-        else if (!inQuote && ch == ' ')
-        {
-            // If we're not inside a quoted string and encounter a space,
-            // add the word to the vector
-            if (!word.empty())
-            {
-                words.push_back(word);
-                word.clear();
-            }
-        }
-        else
-        {
-            // If we're inside a quoted string or the character is not a space,
-            // add the character to the current word
-            word += ch;
-        }
-    }
-
-    // Add the last word if it's not empty
-    if (!word.empty())
-    {
-        words.push_back(word);
-    }
-
-    return words;
-}
+std::unordered_set<std::string> reservedKeywords = {
+    "myn", "for", "while", "switch", "fun", "class", "break", "case", "True", "False", 
+    "public", "enum", "private", "protected", "void", "this", "throw", "try", "catch", 
+    "import", "continue", "pass", "NULL", "elif", "else", "if", "static", "return", 
+    "input", "output", "int", "float", "string", "bool", "start"
+};
 
 std::string shift(std::vector<std::string> &src)
 {
@@ -101,159 +99,164 @@ Token token(std::string value, TokenType tokentype)
 std::vector<Token> tokenize(std::string &sourceCode)
 {
     std::vector<Token> tokens;
-    std::vector<std::string> src = splitString(sourceCode);
+    std::string buffer;
+    bool inQuote = false;
+    char quoteChar = '\0';
 
-    int currentPosition = 0;
-
-    while (!src.empty())
+    for (size_t i = 0; i < sourceCode.size(); ++i)
     {
-        if (src.front() == "(")
-        {
-            tokens.push_back(token(shift(src), TokenType::OpenParen));
-        }
-        else if (src.front() == ")")
-        {
-            tokens.push_back(token(shift(src), TokenType::CloseParen));
-        }
-        else if (src.front() == "[")
-        {
-            tokens.push_back(token(shift(src), TokenType::OpenSBracket));
-        }
-        else if (src.front() == "]")
-        {
-            tokens.push_back(token(shift(src), TokenType::CloseSBracket));
-        }
-        else if (src.front() == "{")
-        {
-            tokens.push_back(token(shift(src), TokenType::OpenBrace));
-        }
-        else if (src.front() == "}")
-        {
-            tokens.push_back(token(shift(src), TokenType::CloseBrace));
-        }
-        else if (src.front() == "+" || src.front() == "-" || src.front() == "*" || src.front() == "/")
-        {
-            tokens.push_back(token(shift(src), TokenType::BinaryOperator));
-        }
-        else if (src.front() == "=")
-        {
-            if (currentPosition == 0)
-            {
-                std::cerr << "Error: '=' cannot appear at the beginning of the expression." << std::endl;
-                return tokens;
-            }
+        char ch = sourceCode[i];
 
-            // Check if "=" is followed by a valid expression
-            if (src.size() > 1)
+        if (inQuote)
+        {
+            buffer += ch;
+            if (ch == quoteChar)
             {
-                const std::string &nextToken = src[1];
-                if (isNumber(nextToken) || isAlpha(nextToken) || nextToken == "(")
-                {
-                    tokens.push_back(token(shift(src), TokenType::Equals));
-                }
-                else
-                {
-                    std::cerr << "Error: Invalid expression after '=' at position " << currentPosition << "." << std::endl;
-                    return tokens;
-                }
-            }
-            else
-            {
-                std::cerr << "Error: '=' must be followed by an expression at position " << currentPosition << "." << std::endl;
-                return tokens;
+                tokens.push_back(token(buffer, TokenType::String));
+                buffer.clear();
+                inQuote = false;
+                quoteChar = '\0';
             }
         }
-        else if (src.front() == "myn")
-        {
-            tokens.push_back(token(shift(src), TokenType::Myn));
-        }
-        else if (src.front() == "and" || src.front() == "or")
-        {
-            tokens.push_back(token(shift(src), TokenType::LogicalOperator));
-        }
-        else if (src.front() == "for")
-        {
-            tokens.push_back(token(shift(src), TokenType::ForKeyword));
-        }
-        else if (src.front() == "while")
-        {
-            tokens.push_back(token(shift(src), TokenType::WhileKeyword));
-        }
-        else if (src.front() == "switch")
-        {
-            tokens.push_back(token(shift(src), TokenType::SwitchKeyword));
-        }
-        else if (src.front() == "class")
-        {
-            tokens.push_back(token(shift(src), TokenType::ClassKeyword));
-        }
-        else if (src.front() == "fun")
-        {
-            tokens.push_back(token(shift(src), TokenType::FunctionKeyword));
-        }
-        else if (src.front() == "in")
-        {
-            tokens.push_back(token(shift(src), TokenType::In));
-        }
-        else if (src.front() == "out")
-        {
-            tokens.push_back(token(shift(src), TokenType::Out));
-        }
-        else if (src.front() == "\"" || src.front() == "'")
-        {
-            // Handle strings enclosed in double or single quotes
-            std::string quote = shift(src);
-            std::string str;
-            str += quote; // Include the opening quote
-            while (!src.empty() && src.front() != quote)
-            {
-                str += shift(src);
-            }
-            if (!src.empty())
-            {
-                str += shift(src); // Add the closing quote
-            }
-            tokens.push_back(token(str, TokenType::String));
-        }
-        // else if(src.front() == "")
         else
         {
-            if (isNumber(src.front()))
+            if (ch == '\'' || ch == '"')
             {
-                std::string number;
-                while (!src.empty() && isNumber(src.front()))
+                inQuote = true;
+                quoteChar = ch;
+                if (!buffer.empty())
                 {
-                    number += shift(src);
+                    TokenType type = checkTokenType(buffer);
+                    tokens.push_back(token(buffer, type));
+                    buffer.clear();
                 }
-
-                tokens.push_back(token(number, TokenType::Number));
+                buffer += ch;
             }
-            else if (isAlpha(src.front()))
+            else if (isSkippable(ch))
             {
-                std::string ident = shift(src);
-                ReservedIdentMap::iterator it = reservedIdent.find(ident);
-                if (it != reservedIdent.end())
+                if (!buffer.empty())
                 {
-                    tokens.push_back(token(ident, it->second));
-                }
-                else
-                {
-                    tokens.push_back(token(ident, TokenType::Identifier));
+                    TokenType type = checkTokenType(buffer);
+                    tokens.push_back(token(buffer, type));
+                    buffer.clear();
                 }
             }
-            else if (isSkippable(src.front()[0]))
+            else if (ch == '(' || ch == ')' || ch == '[' || ch == ']' || ch == '{' || ch == '}' || 
+                     ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '=' || ch == ';')
             {
-                shift(src);
+                if (!buffer.empty())
+                {
+                    TokenType type = checkTokenType(buffer);
+                    tokens.push_back(token(buffer, type));
+                    buffer.clear();
+                }
+                
+                TokenType type;
+                switch (ch)
+                {
+                    case '(': type = TokenType::OpenParen; break;
+                    case ')': type = TokenType::CloseParen; break;
+                    case '[': type = TokenType::OpenSBracket; break;
+                    case ']': type = TokenType::CloseSBracket; break;
+                    case '{': type = TokenType::OpenBrace; break;
+                    case '}': type = TokenType::CloseBrace; break;
+                    case '+': case '-': case '*': case '/': type = TokenType::ArithmeticOperator; break;
+                    case '=': type = TokenType::AssignmentOperator; break;
+                    case ';': type = TokenType::Semicolon; break;
+                }
+                tokens.push_back(token(std::string(1, ch), type));
             }
             else
             {
-                std::cerr << "Error: Unrecognized character '" << src.front() << "' found at position " << currentPosition << "." << std::endl;
-                return tokens;
+                buffer += ch;
             }
         }
+    }
 
-        currentPosition++;
+    if (!buffer.empty())
+    {
+        TokenType type = checkTokenType(buffer);
+        tokens.push_back(token(buffer, type));
     }
 
     return tokens;
 }
+
+
+TokenType checkTokenType(const std::string &token)
+{
+    if (isReservedKeyword(token))
+    {
+        // If the token is a reserved keyword, return its corresponding token type
+        return TokenType::ReservedKeyword;
+    }
+
+    if (isAlpha(token))
+    {
+        // If the token consists of only alphabetic characters, it's an identifier
+        return TokenType::Identifier;
+    }
+    
+    if (isNumber(token))
+    {
+        // If the token consists only of numeric characters, it's a number
+        return TokenType::Number;
+    }
+
+    // Handle other token types using switch statement
+    switch (token[0]) {
+        case '=':
+            return TokenType::AssignmentOperator;
+        case '+':
+            return TokenType::ArithmeticOperator;
+        case '-':
+            return TokenType::ArithmeticOperator;
+        case '*':
+            return TokenType::ArithmeticOperator;
+        case '/':
+            return TokenType::ArithmeticOperator;
+        case '(':
+            return TokenType::OpenParen;
+        case ')':
+            return TokenType::CloseParen;
+        case '{':
+            return TokenType::OpenBrace;
+        case '}':
+            return TokenType::CloseBrace;
+        case '[':
+            return TokenType::OpenSBracket;
+        case ']':
+            return TokenType::CloseSBracket;
+        case ';':
+            return TokenType::Semicolon;
+        case ',':
+            return TokenType::Comma;
+        // Add more cases for other token types as needed
+        default:
+            // If none of the above conditions match, it's an unknown token
+            return TokenType::Unknown;
+    }
+}
+
+
+void check_spacing(const std::vector<Token> &tokens)
+{
+    for (size_t i = 1; i < tokens.size(); ++i)
+    {
+        // Check if the current token and the previous token are both non-skippable
+        if (tokens[i - 1].type != TokenType::Skip && tokens[i].type != TokenType::Skip)
+        {
+            // Check if there is no space between the tokens
+            if (tokens[i - 1].value.size() > 0 && tokens[i].value.size() > 0 &&
+                !isspace(tokens[i - 1].value.back()) && !isspace(tokens[i].value.front()))
+            {
+                std::cerr << "Warning: No space between tokens '" << tokens[i - 1].value << "' and '" << tokens[i].value << "'." << std::endl;
+            }
+        }
+    }
+}
+
+bool isReservedKeyword(const std::string& word) {
+    return reservedKeywords.count(word) > 0;
+}
+

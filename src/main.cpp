@@ -38,7 +38,7 @@ void handleFile(const std::string &filename) {
     // Now you can do something with the tokens, like parsing or interpreting them
     // For now, let's just print them
     for (const Token& token : tokens) {
-        std::cout << "Token: " << token.value << ", Type: " << static_cast<int>(token.type) << std::endl;
+        std::cout << "Token: " << token.value << " => Type: " << static_cast<int>(token.type) << std::endl;
     }
 }
 

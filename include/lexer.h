@@ -4,31 +4,28 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <unordered_set>
 
 enum TokenType
 {
     Number,
     Identifier,
-    Equals,
+    AssignmentOperator,
     OpenParen,
     CloseParen,
-    BinaryOperator,
-    Myn,
+    ArithmeticOperator,
     LogicalOperator,
     OpenBrace,
     CloseBrace,
     OpenSBracket,
     CloseSBracket,
-    ClassKeyword,
-    FunctionKeyword, 
     String, 
-    SwitchKeyword, 
-    ForKeyword, 
-    WhileKeyword, 
-    Out, 
-    In
+    Semicolon, 
+    Skip,      
+    Unknown,
+    Comma,
+    ReservedKeyword
 };
-
 
 
 struct Token
@@ -39,5 +36,7 @@ struct Token
 
 void INIT_RESERVED_IDENTIFIER();
 std::vector<Token> tokenize(std::string &sourceCode);
-
+void check_spacing(const std::vector<Token> &tokens); // Function to check spacing issues
+TokenType checkTokenType(const std::string &token);
+bool isReservedKeyword(const std::string& word);
 #endif // LEXER_H
