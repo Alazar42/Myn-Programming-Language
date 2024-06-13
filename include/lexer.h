@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <unordered_set>
+#include <unordered_map>
 
 enum TokenType
 {
@@ -37,7 +38,8 @@ struct Token
 
 void INIT_RESERVED_IDENTIFIER();
 std::vector<Token> tokenize(std::string &sourceCode);
-void check_spacing(const std::vector<Token> &tokens); // Function to check spacing issues
+std::vector<Token> tokenize_with_config(std::string &sourcecode, std::unordered_map<std::string, std::string> &config);
+void check_spacing(const std::vector<Token> &tokens);
 TokenType checkTokenType(const std::string &token);
 bool isReservedKeyword(const std::string& word);
 #endif // LEXER_H

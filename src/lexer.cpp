@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <vector>
 #include <map>
+#include <unordered_map>
 #include <unordered_set>
 #include <cctype>
 #include <set>
@@ -54,6 +55,13 @@ void INIT_RESERVED_IDENTIFIER()
     reservedIdent["bool"] = TokenType::ReservedKeyword;
 }
 
+std::unordered_set<std::string> defaultReservedKeywords = {
+    "fun", "start", "for", "while", "switch", "class", "break", "case", "true", "false", 
+    "public", "enum", "private", "protected", "void", "this", "throw", "try", "catch", 
+    "import", "continue", "pass", "NULL", "elif", "else", "if", "static", "return", 
+    "input", "output", "int", "float", "string", "bool", "start"
+};
+
 std::unordered_set<std::string> reservedKeywords = {
     "myn", "for", "while", "switch", "fun", "class", "break", "case", "True", "False", 
     "public", "enum", "private", "protected", "void", "this", "throw", "try", "catch", 
@@ -61,6 +69,19 @@ std::unordered_set<std::string> reservedKeywords = {
     "input", "output", "int", "float", "string", "bool", "start"
 };
 
+
+void updateReservedKeywords(const std::unordered_map<std::string, std::string>& config) {
+    reservedKeywords.clear(); // Clear the existing reserved keywords
+    for (const auto& entry : config) {
+        reservedKeywords.insert(entry.second); // Add the new keywords to the reserved keywords set
+    }
+    // Add the default reserved keywords to the set, but only if they are not overridden
+    for (const auto& keyword : defaultReservedKeywords) {
+        if (config.count(keyword) == 0) { // Check if the keyword is not overridden
+            reservedKeywords.insert(keyword);
+        }
+    }
+}
 std::set<std::pair<std::string, std::string>> classChildRelations;
 
 void addClassChildRelation(const std::string& parent, const std::string& child) {
@@ -216,6 +237,91 @@ std::vector<Token> tokenize(std::string &sourceCode)
 
     return tokens;
 }
+
+std::vector<Token> tokenize_with_config(std::string &sourcecode, std::unordered_map<std::string, std::string> &config) {
+    updateReservedKeywords(config); // Update the reservedKeywords set with the new keywords from the config map
+    std::vector<Token> tokens;
+    std::string buffer;
+    bool inQuote = false;
+    char quoteChar = '\0';
+
+    for (size_t i = 0; i < sourcecode.size(); ++i) {
+        char ch = sourcecode[i];
+        if (ch == '\'' || ch == '"') {
+            inQuote = true;
+            quoteChar = ch;
+            if (!buffer.empty()) {
+                if (reservedKeywords.count(buffer)) {
+                    tokens.push_back(token(buffer, TokenType::ReservedKeyword));
+                } else {
+                    tokens.push_back(token(buffer, TokenType::Identifier)); // Default to identifier
+                }
+                buffer.clear();
+            }
+            buffer += ch;
+            } else if (isSkippable(ch)) {
+                if (!buffer.empty()) {
+                    if (reservedKeywords.count(buffer)) {
+                        tokens.push_back(token(buffer, TokenType::ReservedKeyword));
+                    } else {
+                        tokens.push_back(token(buffer, TokenType::Identifier)); // Default to identifier
+                    }
+                    buffer.clear();
+                }
+            } else if (ch == '#') {
+                // Handle single-line comment
+                while (i < sourcecode.size() && sourcecode[i] != '\n') {
+                    ++i;
+                }
+            } else if (ch == '/' && i + 1 < sourcecode.size() && sourcecode[i + 1] == '*') {
+                // Handle multi-line comment
+                i += 2;
+                while (i + 1 < sourcecode.size() && !(sourcecode[i] == '*' && sourcecode[i + 1] == '/')) {
+                    ++i;
+                }
+                i += 1; // Skip the closing '*/'
+            } else if (ch == '(' || ch == ')' || ch == '[' || ch == ']' || ch == '{' || ch == '}' ||
+                       ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '=' || ch == ';' || ch == ',') {
+                if (!buffer.empty()) {
+                    if (reservedKeywords.count(buffer)) {
+                        tokens.push_back(token(buffer, TokenType::ReservedKeyword));
+                    } else {
+                        tokens.push_back(token(buffer, TokenType::Identifier)); // Default to identifier
+                    }
+                    buffer.clear();
+                }
+
+                // Handle single-character symbols
+                TokenType type;
+                switch (ch) {
+                    case '(': type = TokenType::OpenParen; break;
+                    case ')': type = TokenType::CloseParen; break;
+                    case '[': type = TokenType::OpenSBracket; break;
+                    case ']': type = TokenType::CloseSBracket; break;
+                    case '{': type = TokenType::OpenBrace; break;
+                    case '}': type = TokenType::CloseBrace; break;
+                    case '+': case '-': case '*': case '/': type = TokenType::ArithmeticOperator; break;
+                    case '=': type = TokenType::AssignmentOperator; break;
+                    case ';': type = TokenType::Semicolon; break;
+                    case ',': type = TokenType::Comma; break;
+                    default: type = TokenType::Unknown; break;
+                }
+                tokens.push_back(token(std::string(1, ch), type));
+            } else {
+                buffer += ch;
+            }
+        }
+    if (!buffer.empty()) {
+        if (reservedKeywords.count(buffer)) {
+            tokens.push_back(token(buffer, TokenType::ReservedKeyword));
+        } else {
+            tokens.push_back(token(buffer, TokenType::Identifier)); // Default to identifier
+        }
+    }
+
+    return tokens;
+}
+
 
 TokenType checkTokenType(const std::string &token)
 {
