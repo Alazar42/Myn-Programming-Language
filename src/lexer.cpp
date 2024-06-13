@@ -5,7 +5,9 @@
 #include <cstdlib>
 #include <vector>
 #include <map>
+#include <unordered_set>
 #include <cctype>
+#include <set>
 
 typedef std::map<std::string, TokenType> ReservedIdentMap;
 
@@ -59,6 +61,12 @@ std::unordered_set<std::string> reservedKeywords = {
     "input", "output", "int", "float", "string", "bool", "start"
 };
 
+std::set<std::pair<std::string, std::string>> classChildRelations;
+
+void addClassChildRelation(const std::string& parent, const std::string& child) {
+    classChildRelations.insert({parent, child});
+}
+
 std::string shift(std::vector<std::string> &src)
 {
     std::string current = src.front();
@@ -68,10 +76,18 @@ std::string shift(std::vector<std::string> &src)
 
 bool isNumber(const std::string &str)
 {
+    bool hasDecimal = false;
     for (char ch : str)
     {
-        if (!isdigit(ch))
+        if (ch == '.')
+        {
+            if (hasDecimal) return false;
+            hasDecimal = true;
+        }
+        else if (!isdigit(ch))
+        {
             return false;
+        }
     }
     return true;
 }
@@ -141,6 +157,24 @@ std::vector<Token> tokenize(std::string &sourceCode)
                     buffer.clear();
                 }
             }
+            else if (ch == '#')
+            {
+                // Handle single-line comment
+                while (i < sourceCode.size() && sourceCode[i] != '\n')
+                {
+                    ++i;
+                }
+            }
+            else if (ch == '/' && i + 1 < sourceCode.size() && sourceCode[i + 1] == '*')
+            {
+                // Handle multi-line comment
+                i += 2;
+                while (i + 1 < sourceCode.size() && !(sourceCode[i] == '*' && sourceCode[i + 1] == '/'))
+                {
+                    ++i;
+                }
+                i += 1; // Skip the closing '*/'
+            }
             else if (ch == '(' || ch == ')' || ch == '[' || ch == ']' || ch == '{' || ch == '}' || 
                      ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '=' || ch == ';' || ch == ',')
             {
@@ -183,7 +217,6 @@ std::vector<Token> tokenize(std::string &sourceCode)
     return tokens;
 }
 
-
 TokenType checkTokenType(const std::string &token)
 {
     if (isReservedKeyword(token))
@@ -201,7 +234,7 @@ TokenType checkTokenType(const std::string &token)
     if (isNumber(token))
     {
         // If the token consists only of numeric characters, it's a number
-        return TokenType::Number;
+        return token.find('.') != std::string::npos ? TokenType::FloatNumber : TokenType::IntNumber;
     }
 
     // Handle other token types using switch statement
@@ -239,7 +272,6 @@ TokenType checkTokenType(const std::string &token)
     }
 }
 
-
 void check_spacing(const std::vector<Token> &tokens)
 {
     for (size_t i = 1; i < tokens.size(); ++i)
@@ -260,4 +292,3 @@ void check_spacing(const std::vector<Token> &tokens)
 bool isReservedKeyword(const std::string& word) {
     return reservedKeywords.count(word) > 0;
 }
-

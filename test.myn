@@ -1,5 +1,9 @@
 fun start(args[]){
+    # this is a sinle line comment
     while(True){
+        string msg = 'Micky';
+        float pi = 2.0;
         int array = [1,2,3,4,5];
+        output(array);
     }
 }

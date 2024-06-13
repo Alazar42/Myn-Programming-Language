@@ -1,1 +1,1 @@
- build/./main test.myn
+build/./main test.myn

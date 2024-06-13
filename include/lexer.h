@@ -8,7 +8,7 @@
 
 enum TokenType
 {
-    Number,
+    IntNumber,
     Identifier,
     AssignmentOperator,
     OpenParen,
@@ -24,6 +24,7 @@ enum TokenType
     Skip,      
     Unknown,
     Comma,
+    FloatNumber,
     ReservedKeyword
 };
 
