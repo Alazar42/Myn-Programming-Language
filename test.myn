@@ -1,9 +1,19 @@
 fun start(args[]){
     # this is a sinle line comment
-    infinty(True){
+    /* multiline
+    comment */
+    while(ewnet){
         string msg = 'Micky';
         float pi = 2.0;
         int array = [1,2,3,4,5];
         output(array);
     }
+    for(int a = 0; a <= 10; a++){
+        output(a);
+    }
+    greet("Micky");
+}
+
+fun greet(string name){
+    output("Welocome " + name);
 }

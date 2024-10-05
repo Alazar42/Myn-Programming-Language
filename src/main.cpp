@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "../include/lexer.h"
+#include "lexer.hpp"
 #include <filesystem>
 #include <unordered_map>
 #include <algorithm>
@@ -82,7 +82,17 @@ bool hasValidExtension(const std::string &filename) {
 }
 
 std::string getAbsolutePath(const std::string &filename) {
-    return fs::canonical(filename).string();
+    if (!fs::exists(filename)) {
+        std::cout << "Error: File Not Found \"" << filename << "\"" << std::endl;
+        exit(0);
+    }
+
+    try {
+        return fs::canonical(filename).string();
+    } catch (const fs::filesystem_error& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return "";
+    }
 }
 
 bool searchForConfigFile(const std::string &filename) {
