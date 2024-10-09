@@ -33,6 +33,7 @@ public:
     void parseOutputStatement();
     void ParsingError(std::string error);
     bool hasMoreTokens();
+    void parseFunctionStatement();
 };
 
 #endif // PARSER_H

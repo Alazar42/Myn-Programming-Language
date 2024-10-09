@@ -28,14 +28,18 @@ void Parser::parseStatement() {
             parseForLoop();
         } else if (token.value == "output") {
             parseOutputStatement();
-        } 
+        } else if (token.value == "int" || token.value == "string" || token.value == "float" || token.value == "bool") {
+            parseVariableDeclaration();
+        }
         else {
-            ParsingException("Unexpected keyword: " + token.value);
+            LOG_ERROR("Unexpected keyword: " + token.value);
+            exit(0);
         }
     } else if (token.type == TokenType::Identifier) {
         parseFunctionCall();  // Assume an identifier followed by `(` is a function call
     } else {
-        ParsingException("Unexpected token: " + token.value);
+        LOG_ERROR("Unexpected token: " + token.value);
+        exit(0);
     }
 }
 
@@ -44,12 +48,13 @@ void Parser::parseFunctionDefinition() {
     Token functionName = currentToken();
 
     if (functionName.type != TokenType::Identifier) {
-        ParsingException("Expected function name after 'fun'");
+        LOG_ERROR("Expected function name after 'fun'");
     }
 
     advance();  // Skip function name
     if (currentToken().value != "(") {
-        ParsingException("Expected '(' after function name");
+        LOG_ERROR("Expected '(' after function name");
+        exit(0);
     }
 
     // Skip '(' and parameters parsing (simple for now)
@@ -59,7 +64,8 @@ void Parser::parseFunctionDefinition() {
     advance();  // Skip `)`
 
     if (currentToken().value != "{") {
-        ParsingException("Expected '{' after function declaration");
+        LOG_ERROR("Expected '{' after function declaration");
+        exit(0);
     }
 
     advance();  // Enter function body
@@ -74,11 +80,12 @@ void Parser::parseFunctionCall() {
     advance();  // Skip function name
 
     if (currentToken().value != "(") {
-        ParsingException("Expected '(' for function call");
+        LOG_ERROR("Expected '(' for function call");
+        exit(0);
     }
 
     // Skip '(' and arguments parsing (simple for now)
-    while (currentToken().value != ")") {
+    while (currentToken().type != TokenType::Semicolon) {
         advance();
     }
     advance();  // Skip `)`
@@ -86,22 +93,23 @@ void Parser::parseFunctionCall() {
 
 void Parser::parseWhileLoop() {
     advance();  // Skip `while`
-    if (currentToken().value != "(") {
-        ParsingException("Expected '(' after 'while'");
+    if (currentToken().type != TokenType::OpenParen) {
+        LOG_ERROR("Expected '(' after 'while'");
     }
 
     // Skip '(' and condition parsing (simple for now)
-    while (currentToken().value != ")") {
+    while (currentToken().type != TokenType::CloseParen) {
         advance();
     }
     advance();  // Skip `)`
 
-    if (currentToken().value != "{") {
-        ParsingException("Expected '{' after while condition");
+    if (currentToken().type != TokenType::OpenBrace) {
+        LOG_ERROR("Expected '{' after while condition");
+        exit(0);
     }
 
     advance();  // Enter while loop body
-    while (currentToken().value != "}") {
+    while (currentToken().type != TokenType::CloseBrace) {
         parseStatement();
     }
     advance();  // Skip `}`
@@ -110,7 +118,8 @@ void Parser::parseWhileLoop() {
 void Parser::parseForLoop() {
     advance();  // Skip `for`
     if (currentToken().value != "(") {
-        ParsingException("Expected '(' after 'for'");
+        LOG_ERROR("Expected '(' after 'for'");
+        exit(0);
     }
 
     // Skip '(' and loop header parsing (simple for now)
@@ -120,7 +129,8 @@ void Parser::parseForLoop() {
     advance();  // Skip `)`
 
     if (currentToken().value != "{") {
-        ParsingException("Expected '{' after for loop header");
+        LOG_ERROR("Expected '{' after for loop header");
+        exit(0);
     }
 
     advance();  // Enter for loop body
@@ -146,7 +156,8 @@ void Parser::parseVariableDeclaration() {
         advance(); // Move to the next token
 
         if (currentToken().type != TokenType::Identifier) {
-            ParsingException("Expected variable name after type declaration");
+            LOG_ERROR("Expected variable name after type declaration");
+            exit(0);
         }
 
         std::string variableName = currentToken().value;
@@ -183,9 +194,6 @@ void Parser::parseOutputStatement() {
                         LOG_WARNING("Semicolon missing after output statement");
                         exit(0);
                     }
-                    
-                    // Output the string
-                    std::cout << outputString << std::endl;
                     return;
                 } else {
                     LOG_ERROR("Expected ')' after string in output statement.");
