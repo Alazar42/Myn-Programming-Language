@@ -49,24 +49,24 @@ void INIT_RESERVED_IDENTIFIER()
     reservedIdent["output"] = TokenType::ReservedKeyword;
 
     // Add data types
-    reservedIdent["int"] = TokenType::ReservedKeyword;
-    reservedIdent["float"] = TokenType::ReservedKeyword;
-    reservedIdent["string"] = TokenType::ReservedKeyword;
-    reservedIdent["bool"] = TokenType::ReservedKeyword;
+    reservedIdent["int"] = TokenType::Type;
+    reservedIdent["float"] = TokenType::Type;
+    reservedIdent["string"] = TokenType::Type;
+    reservedIdent["bool"] = TokenType::Type;
 }
 
 std::unordered_set<std::string> defaultReservedKeywords = {
-    "fun", "start", "for", "while", "switch", "class", "break", "case", "true", "false", 
+    "fun", "for", "while", "switch", "class", "break", "case", "true", "false", 
     "public", "enum", "private", "protected", "void", "this", "throw", "try", "catch", 
     "import", "continue", "pass", "NULL", "elif", "else", "if", "static", "return", 
-    "input", "output", "int", "float", "string", "bool", "start"
+    "input", "output", "int", "float", "string", "bool"
 };
 
 std::unordered_set<std::string> reservedKeywords = {
     "myn", "for", "while", "switch", "fun", "class", "break", "case", "True", "False", 
     "public", "enum", "private", "protected", "void", "this", "throw", "try", "catch", 
     "import", "continue", "pass", "NULL", "elif", "else", "if", "static", "return", 
-    "input", "output", "int", "float", "string", "bool", "start"
+    "input", "output", "int", "float", "string", "bool"
 };
 
 

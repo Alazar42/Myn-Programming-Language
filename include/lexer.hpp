@@ -26,7 +26,8 @@ enum TokenType
     Unknown,
     Comma,
     FloatNumber,
-    ReservedKeyword
+    ReservedKeyword,
+    Type
 };
 
 

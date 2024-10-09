@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <algorithm>
 #include <fstream>
+#include <parser.hpp>
 
 namespace fs = std::filesystem;
 
@@ -153,6 +154,14 @@ void handleFile(const std::string &filename) {
     for (const Token& token : tokens) {
         std::cout << "Token: " << token.value << " => Type: " << static_cast<int>(token.type) << std::endl;
     }
+
+     // Now create a parser instance
+    Parser parser(tokens);
+    try {
+        parser.parse(); // Start parsing the tokens
+    } catch (const std::exception& e) {
+        std::cerr << "Parsing error: " << e.what() << std::endl;
+    }
 }
 
 void handleFileWithConfig(const std::string &filename, std::unordered_map<std::string, std::string> config) {
@@ -174,9 +183,20 @@ void handleFileWithConfig(const std::string &filename, std::unordered_map<std::s
     for (const Token& token : tokens) {
         std::cout << "Token: " << token.value << " => Type: " << static_cast<int>(token.type) << std::endl;
     }
+
+     // Now create a parser instance
+    Parser parser(tokens);
+    try {
+        parser.parse(); // Start parsing the tokens
+    } catch (const std::exception& e) {
+        std::cerr << "Parsing error: " << e.what() << std::endl;
+    }
 }
 
 int main(int argc, char const *argv[]) {
+
+    INIT_RESERVED_IDENTIFIER();
+
     // Check if there is at least one command-line argument
     if (argc < 2) {
         std::cerr << "No arguments provided." << std::endl;
