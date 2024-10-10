@@ -4,6 +4,6 @@ fun start() {
 
 start();
 
-while (true) {
+while (True) {
     output("test");
 }

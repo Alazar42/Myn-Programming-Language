@@ -195,8 +195,6 @@ void handleFileWithConfig(const std::string &filename, std::unordered_map<std::s
 
 int main(int argc, char const *argv[]) {
 
-    INIT_RESERVED_IDENTIFIER();
-
     // Check if there is at least one command-line argument
     if (argc < 2) {
         std::cerr << "No arguments provided." << std::endl;

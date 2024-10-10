@@ -17,74 +17,76 @@ ReservedIdentMap reservedIdent;
 
 void INIT_RESERVED_IDENTIFIER()
 {
-    reservedIdent["myn"] = TokenType::ReservedKeyword;
-    reservedIdent["for"] = TokenType::ReservedKeyword;
-    reservedIdent["while"] = TokenType::ReservedKeyword;
-    reservedIdent["switch"] = TokenType::ReservedKeyword;
-    reservedIdent["fun"] = TokenType::ReservedKeyword;
-    reservedIdent["class"] = TokenType::ReservedKeyword;
-    reservedIdent["break"] = TokenType::ReservedKeyword;
-    reservedIdent["case"] = TokenType::ReservedKeyword;
-    reservedIdent["True"] = TokenType::ReservedKeyword;
-    reservedIdent["False"] = TokenType::ReservedKeyword;
-    reservedIdent["public"] = TokenType::ReservedKeyword;
-    reservedIdent["enum"] = TokenType::ReservedKeyword;
-    reservedIdent["private"] = TokenType::ReservedKeyword;
-    reservedIdent["protected"] = TokenType::ReservedKeyword;
-    reservedIdent["void"] = TokenType::ReservedKeyword;
-    reservedIdent["this"] = TokenType::ReservedKeyword;
-    reservedIdent["throw"] = TokenType::ReservedKeyword;
-    reservedIdent["try"] = TokenType::ReservedKeyword;
-    reservedIdent["catch"] = TokenType::ReservedKeyword;
-    reservedIdent["import"] = TokenType::ReservedKeyword;
-    reservedIdent["continue"] = TokenType::ReservedKeyword;
-    reservedIdent["pass"] = TokenType::ReservedKeyword;
-    reservedIdent["NULL"] = TokenType::ReservedKeyword;
-    reservedIdent["elif"] = TokenType::ReservedKeyword;
-    reservedIdent["else"] = TokenType::ReservedKeyword;
-    reservedIdent["if"] = TokenType::ReservedKeyword;
-    reservedIdent["static"] = TokenType::ReservedKeyword;
-    reservedIdent["return"] = TokenType::ReservedKeyword;
-    reservedIdent["input"] = TokenType::ReservedKeyword;
-    reservedIdent["output"] = TokenType::ReservedKeyword;
+    reservedIdent["myn"] = TokenType::Myn;
+    reservedIdent["for"] = TokenType::For;
+    reservedIdent["while"] = TokenType::While;
+    reservedIdent["switch"] = TokenType::Switch;
+    reservedIdent["fun"] = TokenType::Fun;
+    reservedIdent["class"] = TokenType::Class;
+    reservedIdent["break"] = TokenType::Break;
+    reservedIdent["case"] = TokenType::Case;
+    reservedIdent["True"] = TokenType::True;
+    reservedIdent["False"] = TokenType::False;
+    reservedIdent["public"] = TokenType::Public;
+    reservedIdent["enum"] = TokenType::Enum;
+    reservedIdent["private"] = TokenType::Private;
+    reservedIdent["protected"] = TokenType::Protected;
+    reservedIdent["void"] = TokenType::Void;
+    reservedIdent["this"] = TokenType::This;
+    reservedIdent["throw"] = TokenType::Throw;
+    reservedIdent["try"] = TokenType::Try;
+    reservedIdent["catch"] = TokenType::Catch;
+    reservedIdent["import"] = TokenType::Import;
+    reservedIdent["continue"] = TokenType::Continue;
+    reservedIdent["pass"] = TokenType::Pass;
+    reservedIdent["NULL"] = TokenType::Null;
+    reservedIdent["elif"] = TokenType::Elif;
+    reservedIdent["else"] = TokenType::Else;
+    reservedIdent["if"] = TokenType::If;
+    reservedIdent["static"] = TokenType::Static;
+    reservedIdent["return"] = TokenType::Return;
+    reservedIdent["input"] = TokenType::Input;
+    reservedIdent["output"] = TokenType::Output;
 
     // Add data types
-    reservedIdent["int"] = TokenType::Type;
-    reservedIdent["float"] = TokenType::Type;
-    reservedIdent["string"] = TokenType::Type;
-    reservedIdent["bool"] = TokenType::Type;
+    reservedIdent["int"] = TokenType::IntType;
+    reservedIdent["float"] = TokenType::FloatType;
+    reservedIdent["string"] = TokenType::StringType;
+    reservedIdent["bool"] = TokenType::BooleanType;
 }
 
 std::unordered_set<std::string> defaultReservedKeywords = {
-    "fun", "for", "while", "switch", "class", "break", "case", "true", "false", 
-    "public", "enum", "private", "protected", "void", "this", "throw", "try", "catch", 
-    "import", "continue", "pass", "NULL", "elif", "else", "if", "static", "return", 
-    "input", "output", "int", "float", "string", "bool"
-};
+    "fun", "for", "while", "switch", "class", "break", "case", "true", "false",
+    "public", "enum", "private", "protected", "void", "this", "throw", "try", "catch",
+    "import", "continue", "pass", "NULL", "elif", "else", "if", "static", "return",
+    "input", "output", "int", "float", "string", "bool"};
 
 std::unordered_set<std::string> reservedKeywords = {
-    "myn", "for", "while", "switch", "fun", "class", "break", "case", "True", "False", 
-    "public", "enum", "private", "protected", "void", "this", "throw", "try", "catch", 
-    "import", "continue", "pass", "NULL", "elif", "else", "if", "static", "return", 
-    "input", "output", "int", "float", "string", "bool"
-};
+    "myn", "for", "while", "switch", "fun", "class", "break", "case", "True", "False",
+    "public", "enum", "private", "protected", "void", "this", "throw", "try", "catch",
+    "import", "continue", "pass", "NULL", "elif", "else", "if", "static", "return",
+    "input", "output", "int", "float", "string", "bool"};
 
-
-void updateReservedKeywords(const std::unordered_map<std::string, std::string>& config) {
+void updateReservedKeywords(const std::unordered_map<std::string, std::string> &config)
+{
     reservedKeywords.clear(); // Clear the existing reserved keywords
-    for (const auto& entry : config) {
+    for (const auto &entry : config)
+    {
         reservedKeywords.insert(entry.second); // Add the new keywords to the reserved keywords set
     }
     // Add the default reserved keywords to the set, but only if they are not overridden
-    for (const auto& keyword : defaultReservedKeywords) {
-        if (config.count(keyword) == 0) { // Check if the keyword is not overridden
+    for (const auto &keyword : defaultReservedKeywords)
+    {
+        if (config.count(keyword) == 0)
+        { // Check if the keyword is not overridden
             reservedKeywords.insert(keyword);
         }
     }
 }
 std::set<std::pair<std::string, std::string>> classChildRelations;
 
-void addClassChildRelation(const std::string& parent, const std::string& child) {
+void addClassChildRelation(const std::string &parent, const std::string &child)
+{
     classChildRelations.insert({parent, child});
 }
 
@@ -102,7 +104,8 @@ bool isNumber(const std::string &str)
     {
         if (ch == '.')
         {
-            if (hasDecimal) return false;
+            if (hasDecimal)
+                return false;
             hasDecimal = true;
         }
         else if (!isdigit(ch))
@@ -196,7 +199,7 @@ std::vector<Token> tokenize(std::string &sourceCode)
                 }
                 i += 1; // Skip the closing '*/'
             }
-            else if (ch == '(' || ch == ')' || ch == '[' || ch == ']' || ch == '{' || ch == '}' || 
+            else if (ch == '(' || ch == ')' || ch == '[' || ch == ']' || ch == '{' || ch == '}' ||
                      ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '=' || ch == ';' || ch == ',')
             {
                 if (!buffer.empty())
@@ -205,20 +208,43 @@ std::vector<Token> tokenize(std::string &sourceCode)
                     tokens.push_back(token(buffer, type));
                     buffer.clear();
                 }
-                
+
                 TokenType type;
                 switch (ch)
                 {
-                    case '(': type = TokenType::OpenParen; break;
-                    case ')': type = TokenType::CloseParen; break;
-                    case '[': type = TokenType::OpenSBracket; break;
-                    case ']': type = TokenType::CloseSBracket; break;
-                    case '{': type = TokenType::OpenBrace; break;
-                    case '}': type = TokenType::CloseBrace; break;
-                    case '+': case '-': case '*': case '/': type = TokenType::ArithmeticOperator; break;
-                    case '=': type = TokenType::AssignmentOperator; break;
-                    case ';': type = TokenType::Semicolon; break;
-                    case ',': type = TokenType::Comma; break;
+                case '(':
+                    type = TokenType::OpenParen;
+                    break;
+                case ')':
+                    type = TokenType::CloseParen;
+                    break;
+                case '[':
+                    type = TokenType::OpenSBracket;
+                    break;
+                case ']':
+                    type = TokenType::CloseSBracket;
+                    break;
+                case '{':
+                    type = TokenType::OpenBrace;
+                    break;
+                case '}':
+                    type = TokenType::CloseBrace;
+                    break;
+                case '+':
+                case '-':
+                case '*':
+                case '/':
+                    type = TokenType::ArithmeticOperator;
+                    break;
+                case '=':
+                    type = TokenType::AssignmentOperator;
+                    break;
+                case ';':
+                    type = TokenType::Semicolon;
+                    break;
+                case ',':
+                    type = TokenType::Comma;
+                    break;
                 }
                 tokens.push_back(token(std::string(1, ch), type));
             }
@@ -238,105 +264,127 @@ std::vector<Token> tokenize(std::string &sourceCode)
     return tokens;
 }
 
-std::vector<Token> tokenize_with_config(std::string &sourcecode, std::unordered_map<std::string, std::string> &config) {
+std::vector<Token> tokenize_with_config(std::string &sourcecode, std::unordered_map<std::string, std::string> &config)
+{
     updateReservedKeywords(config); // Update the reservedKeywords set with the new keywords from the config map
     std::vector<Token> tokens;
     std::string buffer;
     bool inQuote = false;
-    char quoteChar = '\0';
+    char quoteChar = '0';
 
-    for (size_t i = 0; i < sourcecode.size(); ++i) {
+    for (size_t i = 0; i < sourcecode.size(); ++i)
+    {
         char ch = sourcecode[i];
-        if (ch == '\'' || ch == '"') {
-            inQuote = true;
-            quoteChar = ch;
-            if (!buffer.empty()) {
-                if (reservedKeywords.count(buffer)) {
-                    tokens.push_back(token(buffer, TokenType::ReservedKeyword));
-                } else {
-                    tokens.push_back(token(buffer, TokenType::Identifier)); // Default to identifier
-                }
+        if (ch == '\'' || ch == '"')
+        {
+            inQuote = !inQuote; // Toggle inQuote
+            if (inQuote)
+            {
+                quoteChar = ch; // Store quote character
+            }
+            else
+            {
+                buffer += ch;                                       // Close the string
+                tokens.push_back(token(buffer, TokenType::String)); // Assuming you have a String type
                 buffer.clear();
             }
-            buffer += ch;
-            } else if (isSkippable(ch)) {
-                if (!buffer.empty()) {
-                    if (reservedKeywords.count(buffer)) {
-                        tokens.push_back(token(buffer, TokenType::ReservedKeyword));
-                    } else {
-                        tokens.push_back(token(buffer, TokenType::Identifier)); // Default to identifier
-                    }
-                    buffer.clear();
-                }
-            } else if (ch == '#') {
-                // Handle single-line comment
-                while (i < sourcecode.size() && sourcecode[i] != '\n') {
-                    ++i;
-                }
-            } else if (ch == '/' && i + 1 < sourcecode.size() && sourcecode[i + 1] == '*') {
-                // Handle multi-line comment
-                i += 2;
-                while (i + 1 < sourcecode.size() && !(sourcecode[i] == '*' && sourcecode[i + 1] == '/')) {
-                    ++i;
-                }
-                i += 1; // Skip the closing '*/'
-            } else if (ch == '(' || ch == ')' || ch == '[' || ch == ']' || ch == '{' || ch == '}' ||
-                       ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '=' || ch == ';' || ch == ',') {
-                if (!buffer.empty()) {
-                    if (reservedKeywords.count(buffer)) {
-                        tokens.push_back(token(buffer, TokenType::ReservedKeyword));
-                    } else {
-                        tokens.push_back(token(buffer, TokenType::Identifier)); // Default to identifier
-                    }
-                    buffer.clear();
-                }
-
-                // Handle single-character symbols
-                TokenType type;
-                switch (ch) {
-                    case '(': type = TokenType::OpenParen; break;
-                    case ')': type = TokenType::CloseParen; break;
-                    case '[': type = TokenType::OpenSBracket; break;
-                    case ']': type = TokenType::CloseSBracket; break;
-                    case '{': type = TokenType::OpenBrace; break;
-                    case '}': type = TokenType::CloseBrace; break;
-                    case '+': case '-': case '*': case '/': type = TokenType::ArithmeticOperator; break;
-                    case '=': type = TokenType::AssignmentOperator; break;
-                    case ';': type = TokenType::Semicolon; break;
-                    case ',': type = TokenType::Comma; break;
-                    default: type = TokenType::Unknown; break;
-                }
-                tokens.push_back(token(std::string(1, ch), type));
-            } else {
-                buffer += ch;
+        }
+        else if (isSkippable(ch))
+        {
+            if (!buffer.empty())
+            {
+                // Handle the buffer before skipping
+                tokens.push_back(token(buffer, TokenType::Identifier)); // Default to identifier
+                buffer.clear();
             }
         }
-    if (!buffer.empty()) {
-        if (reservedKeywords.count(buffer)) {
-            tokens.push_back(token(buffer, TokenType::ReservedKeyword));
-        } else {
-            tokens.push_back(token(buffer, TokenType::Identifier)); // Default to identifier
+        else if (ch == '#')
+        {
+            // Handle single-line comment
+            while (i < sourcecode.size() && sourcecode[i] != 'n') // Fixed 'n' character
+            {
+                ++i;
+            }
         }
+        else if (ch == '/' && i + 1 < sourcecode.size() && sourcecode[i + 1] == '*')
+        {
+            // Handle multi-line comment
+            i += 2;
+            while (i + 1 < sourcecode.size() && !(sourcecode[i] == '*' && sourcecode[i + 1] == '/'))
+            {
+                ++i;
+            }
+            i += 1; // Skip the closing '*/'
+        }
+        else if (isSymbol(ch))
+        { 
+            if (!buffer.empty())
+            {
+                tokens.push_back(token(buffer, TokenType::Identifier)); // Default to identifier
+                buffer.clear();
+            }
+
+            // Handle single-character symbols
+            TokenType type = getSymbolTokenType(std::string(1, ch)); // Convert char to std::string
+            tokens.push_back(token(std::string(1, ch), type));
+        }
+        else
+        {
+            buffer += ch;
+        }
+    }
+
+    if (!buffer.empty())
+    {
+        tokens.push_back(token(buffer, TokenType::Identifier)); // Default to identifier
     }
 
     return tokens;
 }
 
+// Helper function to determine if a character is a symbol
+bool isSymbol(char ch)
+{
+    return ch == '(' || ch == ')' || ch == '[' || ch == ']' || ch == '{' || ch == '}' ||
+           ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '=' ||
+           ch == ';' || ch == ',';
+}
+
+// Helper function to get the TokenType for symbols
+TokenType getSymbolTokenType(const std::string& symbol) {
+    static const std::unordered_map<std::string, TokenType> tokenMap = {
+        {"(", TokenType::OpenParen},
+        {")", TokenType::CloseParen},
+        {"[", TokenType::OpenSBracket},
+        {"]", TokenType::CloseSBracket},
+        {"{", TokenType::OpenBrace},
+        {"}", TokenType::CloseBrace},
+        {"+", TokenType::ArithmeticOperator},
+        {"-", TokenType::ArithmeticOperator},
+        {"*", TokenType::ArithmeticOperator},
+        {"/", TokenType::ArithmeticOperator},
+        {"=", TokenType::AssignmentOperator},
+        {";", TokenType::Semicolon},
+        {",", TokenType::Comma},
+        // Add more symbols as needed
+    };
+
+    auto it = tokenMap.find(symbol);
+    if (it != tokenMap.end()) {
+        return it->second;
+    }
+
+    return TokenType::Unknown; // Handle unexpected symbols
+}
 
 TokenType checkTokenType(const std::string &token)
 {
-    if (isReservedKeyword(token))
-    {
-        // If the token is a reserved keyword, return its corresponding token type
-        return TokenType::ReservedKeyword;
-    }
-
     if (isAlpha(token))
     {
         // If the token consists of only alphabetic characters, it's an identifier
         return TokenType::Identifier;
     }
-    
+
     if (isNumber(token))
     {
         // If the token consists only of numeric characters, it's a number
@@ -344,37 +392,35 @@ TokenType checkTokenType(const std::string &token)
     }
 
     // Handle other token types using switch statement
-    switch (token[0]) {
-        case '=':
-            return TokenType::AssignmentOperator;
-        case '+':
-            return TokenType::ArithmeticOperator;
-        case '-':
-            return TokenType::ArithmeticOperator;
-        case '*':
-            return TokenType::ArithmeticOperator;
-        case '/':
-            return TokenType::ArithmeticOperator;
-        case '(':
-            return TokenType::OpenParen;
-        case ')':
-            return TokenType::CloseParen;
-        case '{':
-            return TokenType::OpenBrace;
-        case '}':
-            return TokenType::CloseBrace;
-        case '[':
-            return TokenType::OpenSBracket;
-        case ']':
-            return TokenType::CloseSBracket;
-        case ';':
-            return TokenType::Semicolon;
-        case ',':
-            return TokenType::Comma;
-        // Add more cases for other token types as needed
-        default:
-            // If none of the above conditions match, it's an unknown token
-            return TokenType::Unknown;
+    switch (token[0])
+    {
+    case '=':
+        return TokenType::AssignmentOperator;
+    case '+':
+    case '-':
+    case '*':
+    case '/':
+        return TokenType::ArithmeticOperator;
+    case '(':
+        return TokenType::OpenParen;
+    case ')':
+        return TokenType::CloseParen;
+    case '{':
+        return TokenType::OpenBrace;
+    case '}':
+        return TokenType::CloseBrace;
+    case '[':
+        return TokenType::OpenSBracket;
+    case ']':
+        return TokenType::CloseSBracket;
+    case ';':
+        return TokenType::Semicolon;
+    case ',':
+        return TokenType::Comma;
+    // Add more cases for other token types as needed
+    default:
+        // If none of the above conditions match, it's an unknown token
+        return TokenType::Unknown;
     }
 }
 
@@ -393,8 +439,4 @@ void check_spacing(const std::vector<Token> &tokens)
             }
         }
     }
-}
-
-bool isReservedKeyword(const std::string& word) {
-    return reservedKeywords.count(word) > 0;
 }

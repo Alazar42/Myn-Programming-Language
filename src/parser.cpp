@@ -19,26 +19,20 @@ void Parser::parse() {
 void Parser::parseStatement() {
     Token token = currentToken();
     
-    if (token.type == TokenType::ReservedKeyword) {
-        if (token.value == "fun") {
+    if (token.type == Fun) {
             parseFunctionDefinition();
-        } else if (token.value == "while") {
+    } else if (token.type == While) {
             parseWhileLoop();
-        } else if (token.value == "for") {
+    } else if (token.type == For) {
             parseForLoop();
-        } else if (token.value == "output") {
+    } else if (token.type == Output) {
             parseOutputStatement();
-        } else if (token.value == "int" || token.value == "string" || token.value == "float" || token.value == "bool") {
+    } else if (token.type == IntType || token.type == StringType || token.type == FloatType || token.type == BooleanType) {
             parseVariableDeclaration();
-        }
-        else {
-            LOG_ERROR("Unexpected keyword: " + token.value);
-            exit(0);
-        }
     } else if (token.type == TokenType::Identifier) {
         parseFunctionCall();  // Assume an identifier followed by `(` is a function call
     } else {
-        LOG_ERROR("Unexpected token: " + token.value);
+        LOG_ERROR("Unexpected token: " + token.type);
         exit(0);
     }
 }
@@ -52,24 +46,24 @@ void Parser::parseFunctionDefinition() {
     }
 
     advance();  // Skip function name
-    if (currentToken().value != "(") {
+    if (currentToken().type != OpenParen) {
         LOG_ERROR("Expected '(' after function name");
         exit(0);
     }
 
     // Skip '(' and parameters parsing (simple for now)
-    while (currentToken().value != ")") {
+    while (currentToken().type != CloseParen) {
         advance();
     }
     advance();  // Skip `)`
 
-    if (currentToken().value != "{") {
+    if (currentToken().type != OpenBrace) {
         LOG_ERROR("Expected '{' after function declaration");
         exit(0);
     }
 
     advance();  // Enter function body
-    while (currentToken().value != "}") {
+    while (currentToken().type != CloseBrace) {
         parseStatement();
     }
     advance();  // Skip `}`
@@ -79,7 +73,7 @@ void Parser::parseFunctionCall() {
     Token functionName = currentToken();
     advance();  // Skip function name
 
-    if (currentToken().value != "(") {
+    if (currentToken().type != OpenParen) {
         LOG_ERROR("Expected '(' for function call");
         exit(0);
     }
@@ -95,6 +89,7 @@ void Parser::parseWhileLoop() {
     advance();  // Skip `while`
     if (currentToken().type != TokenType::OpenParen) {
         LOG_ERROR("Expected '(' after 'while'");
+        exit(0);
     }
 
     // Skip '(' and condition parsing (simple for now)
@@ -117,24 +112,24 @@ void Parser::parseWhileLoop() {
 
 void Parser::parseForLoop() {
     advance();  // Skip `for`
-    if (currentToken().value != "(") {
+    if (currentToken().type != OpenBrace) {
         LOG_ERROR("Expected '(' after 'for'");
         exit(0);
     }
 
     // Skip '(' and loop header parsing (simple for now)
-    while (currentToken().value != ")") {
+    while (currentToken().type != OpenParen) {
         advance();
     }
     advance();  // Skip `)`
 
-    if (currentToken().value != "{") {
+    if (currentToken().type != OpenBrace) {
         LOG_ERROR("Expected '{' after for loop header");
         exit(0);
     }
 
     advance();  // Enter for loop body
-    while (currentToken().value != "}") {
+    while (currentToken().type != CloseBrace) {
         parseStatement();
     }
     advance();  // Skip `}`
@@ -151,8 +146,13 @@ void Parser::advance() {
 }
 
 void Parser::parseVariableDeclaration() {
-    if (currentToken().type == TokenType::Type) { // TYPE could be 'int', 'float', 'string', etc.
-        std::string typeName = currentToken().value;
+    // Check if the current token is a reserved type
+    if (currentToken().type == TokenType::IntType ||
+        currentToken().type == TokenType::FloatType ||
+        currentToken().type == TokenType::StringType ||
+        currentToken().type == TokenType::BooleanType) {
+        
+        std::string typeName = currentToken().value; // Assuming 'value' holds the string representation of the type
         advance(); // Move to the next token
 
         if (currentToken().type != TokenType::Identifier) {
@@ -160,25 +160,26 @@ void Parser::parseVariableDeclaration() {
             exit(0);
         }
 
-        std::string variableName = currentToken().value;
+        std::string variableName = currentToken().value; // Assuming 'value' holds the identifier name
         advance(); // Move to the next token
 
         // Handle the rest of the variable declaration (e.g., assignment)
+    } else {
+        LOG_ERROR("Expected a type declaration (int, float, string, bool)");
+        exit(0);
     }
 }
 
 void Parser::parseOutputStatement() {
-    // Ensure the current token is a reserved keyword before proceeding
-    assert(currentToken().type == TokenType::ReservedKeyword && "Expected reserved keyword 'output'");
-    
-    if (currentToken().type == TokenType::ReservedKeyword) {
+    // Ensure the current token is the 'output' keyword
+    if (currentToken().type == TokenType::Output) {
         advance();  // Move to '('
         
         if (currentToken().type == TokenType::OpenParen) {
             advance();  // Move to the string or variable
             
             if (currentToken().type == TokenType::String) {
-                std::string outputString = currentToken().value;
+                std::string outputString = currentToken().value; // Assuming 'value' holds the string content
                 advance();  // Move to ')'
                 
                 if (currentToken().type == TokenType::CloseParen) {
@@ -208,7 +209,7 @@ void Parser::parseOutputStatement() {
             exit(0);
         }
     } else {
-        LOG_ERROR("Unexpected token: " + currentToken().value);
+        LOG_ERROR("Unexpected token: " + currentToken().value); // Assuming 'value' holds the string representation of the token
         exit(0);
     }
 }
