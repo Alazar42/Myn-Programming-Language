@@ -116,14 +116,43 @@ bool isNumber(const std::string &str)
     return true;
 }
 
-bool isAlpha(const std::string &str)
-{
-    for (char ch : str)
-    {
-        if (!isalpha(ch))
-            return false;
+// Function to classify the token and return its TokenType
+TokenType classifyToken(const std::string &token) {
+    // Check if the token is a reserved identifier
+    if (reservedIdent.find(token) != reservedIdent.end()) {
+        return reservedIdent[token];
     }
-    return true;
+
+    // Check if the token is an identifier (alphabetic or underscore)
+    if (isalpha(token[0]) || token[0] == '_') {
+        for (char ch : token) {
+            if (!isalnum(ch) && ch != '_') {
+                return TokenType::Invalid; // Invalid identifier
+            }
+        }
+        return TokenType::Identifier;
+    }
+
+    // Check if the token is a number (integer or float)
+    bool hasDecimalPoint = false;
+    for (char ch : token) {
+        if (ch == '.') {
+            if (hasDecimalPoint) return TokenType::Invalid; // Multiple decimal points
+            hasDecimalPoint = true;
+        } else if (!isdigit(ch)) {
+            return TokenType::Invalid; // Not a valid number
+        }
+    }
+    return hasDecimalPoint ? TokenType::FloatType : TokenType::IntNumber; // Determine type based on decimal point
+}
+
+// Check if the token is an identifier
+bool isAlpha(const std::string &str, TokenType &type) {
+    // Classify the token and assign its TokenType
+    type = classifyToken(str);
+
+    // Check if the token is an identifier
+    return type == TokenType::Identifier;
 }
 
 bool isSkippable(char ch)
@@ -379,7 +408,9 @@ TokenType getSymbolTokenType(const std::string& symbol) {
 
 TokenType checkTokenType(const std::string &token)
 {
-    if (isAlpha(token))
+    TokenType type;
+
+    if (isAlpha(token, type))
     {
         // If the token consists of only alphabetic characters, it's an identifier
         return TokenType::Identifier;

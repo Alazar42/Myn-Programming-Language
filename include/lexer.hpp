@@ -59,7 +59,8 @@ enum TokenType
     IntType,
     FloatType,
     BooleanType,
-    StringType
+    StringType,
+    Invalid
 };
 
 
